@@ -273,12 +273,13 @@ func GetStoryHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		locked := ch.CoinCost > 0 && !unlocked[ch.ID]
 		previews = append(previews, chapterPreview{
-			ID:       ch.ID,
-			Number:   ch.Number,
-			Title:    ch.Title,
-			CoinCost: ch.CoinCost,
-			Locked:   locked,
-			Unlocked: !locked,
+			ID:        ch.ID,
+			Number:    ch.Number,
+			Title:     ch.Title,
+			CoinCost:  ch.CoinCost,
+			Locked:    locked,
+			Unlocked:  !locked,
+			Published: ch.PublishedAt != nil,
 		})
 	}
 

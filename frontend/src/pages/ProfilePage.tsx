@@ -540,7 +540,7 @@ export default function ProfilePage() {
             <div className="field-group">
               <span className="field-label">Blocked tags</span>
               <p className="field-hint">
-                AO3-style filtering — stories carrying any of these tags are hidden from browse results.
+                Stories carrying any of these tags are hidden from your browse results.
               </p>
               <div className="blocked-tag-input">
                 <input

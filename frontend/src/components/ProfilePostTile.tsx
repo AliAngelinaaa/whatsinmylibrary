@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { ProfileWork } from '../api'
 import { MONETIZATION_ENABLED } from '../features'
+import { coverStyle } from '../utils/cover'
 
 const COVER_SIZES = ['short', 'mid', 'tall'] as const
 
@@ -16,9 +17,10 @@ export default function ProfilePostTile({
   return (
     <article className={`pin-card pin-write pin-cover-${cover}`}>
       <Link to={`/story/${work.id}`} className="pin-card-link">
-        <div className="pin-cover" style={{ background: work.coverColor }}>
+        <div className="pin-cover" style={coverStyle(work)}>
           <span className="pin-kicker">Wrote</span>
           <span className="pin-genre">{work.genre}</span>
+          {work.status === 'draft' && <span className="pin-badge draft">Draft</span>}
         </div>
         <div className="pin-body">
           <h3>{work.title}</h3>

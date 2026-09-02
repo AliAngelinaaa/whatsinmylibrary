@@ -133,6 +133,7 @@ export interface ChapterPreview {
   coinCost: number
   locked: boolean
   unlocked: boolean
+  published: boolean
 }
 
 export interface StoryDetail {

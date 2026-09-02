@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './AuthContext'
 import { PrefsProvider } from './PrefsContext'
@@ -15,6 +16,9 @@ import PublicProfilePage from './pages/PublicProfilePage'
 import ForumPage from './pages/ForumPage'
 import ForumThreadPage from './pages/ForumThreadPage'
 import LoginPage from './pages/LoginPage'
+import MyWorksPage from './pages/MyWorksPage'
+import StoryEditPage from './pages/StoryEditPage'
+import ChapterEditPage from './pages/ChapterEditPage'
 import './App.css'
 
 function MeRedirect() {
@@ -22,6 +26,13 @@ function MeRedirect() {
   if (loading) return <div className="page-state">Loading…</div>
   if (!user) return <Navigate to="/login" replace />
   return <Navigate to={userProfilePath(user) || '/profile'} replace />
+}
+
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="page-state">Loading…</div>
+  if (!user) return <Navigate to="/login" replace />
+  return <>{children}</>
 }
 
 function App() {
@@ -42,6 +53,30 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/me" element={<MeRedirect />} />
             <Route path="/user/:username" element={<PublicProfilePage />} />
+            <Route
+              path="/write"
+              element={
+                <RequireAuth>
+                  <MyWorksPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/write/:storyId"
+              element={
+                <RequireAuth>
+                  <StoryEditPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/write/:storyId/chapters/:chapterId"
+              element={
+                <RequireAuth>
+                  <ChapterEditPage />
+                </RequireAuth>
+              }
+            />
             <Route path="/forum" element={<ForumPage />} />
             <Route path="/forum/thread/:id" element={<ForumThreadPage />} />
             <Route path="/login" element={<LoginPage />} />

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { ProfileWork } from '../api'
 import { MONETIZATION_ENABLED } from '../features'
+import { coverStyle } from '../utils/cover'
 
 function formatUpdated(iso: string) {
   const date = new Date(iso)
@@ -10,7 +11,7 @@ function formatUpdated(iso: string) {
 export default function ProfileWorkBlurb({ work }: { work: ProfileWork }) {
   return (
     <li className="work-blurb">
-      <div className="work-blurb-cover" style={{ background: work.coverColor }} aria-hidden />
+      <div className="work-blurb-cover" style={coverStyle(work)} aria-hidden />
       <div className="work-blurb-body">
         <h3 className="work-blurb-title">
           <Link to={`/story/${work.id}`}>{work.title}</Link>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { StorySummary } from '../api'
 import { MONETIZATION_ENABLED } from '../features'
+import { coverStyle } from '../utils/cover'
 import { userProfilePath } from './Avatar'
 
 export type CollectionVariant = 'browse' | 'originals' | 'fanfics' | 'vip'
@@ -39,7 +40,7 @@ export default function BrowseWorkBlurb({
     return (
       <li className="shelf-card">
         <Link to={`/story/${story.id}`} className="shelf-card-cover" aria-hidden>
-          <span style={{ background: story.coverColor }} />
+          <span style={coverStyle(story)} />
         </Link>
         <h3 className="shelf-card-title">
           <Link to={`/story/${story.id}`}>{story.title}</Link>
@@ -72,7 +73,7 @@ export default function BrowseWorkBlurb({
         )}
         <div className="topic-card-row">
           <Link to={`/story/${story.id}`} className="topic-card-cover" aria-hidden>
-            <span style={{ background: story.coverColor }} />
+            <span style={coverStyle(story)} />
           </Link>
           <div className="topic-card-body">
             <h3 className="topic-card-title">
@@ -97,7 +98,7 @@ export default function BrowseWorkBlurb({
     return (
       <li className={`vip-card ${featured ? 'featured' : ''}`}>
         <Link to={`/story/${story.id}`} className="vip-card-cover" aria-hidden>
-          <span style={{ background: story.coverColor }} />
+          <span style={coverStyle(story)} />
           <em className="vip-card-badge">VIP</em>
         </Link>
         <div className="vip-card-body">
@@ -128,7 +129,7 @@ export default function BrowseWorkBlurb({
   return (
     <li className="browse-blurb">
       <Link to={`/story/${story.id}`} className="browse-blurb-cover" aria-hidden>
-        <span style={{ background: story.coverColor }} />
+        <span style={coverStyle(story)} />
       </Link>
 
       <div className="browse-blurb-body">

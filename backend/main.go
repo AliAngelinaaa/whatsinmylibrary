@@ -6,6 +6,7 @@ import (
 	"backend/seed"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -13,7 +14,12 @@ func main() {
 	config.ConnectDatabase()
 	seed.Run()
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	router := routes.SetupRouter()
-	log.Println("Server running at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Printf("Server running at http://localhost:%s", port)
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

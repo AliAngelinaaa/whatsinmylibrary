@@ -6438,3 +6438,628 @@ button, input {
     margin-right: -0.25rem;
   }
 }
+
+/* ==========================================================================
+   Writing & publishing flow
+   ========================================================================== */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.status-pill.published {
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  border-color: var(--accent);
+}
+
+.status-pill.draft {
+  background: #fff4e0;
+  color: #92620c;
+  border-color: #eecb8a;
+}
+
+.status-pill.small {
+  padding: 0.1rem 0.45rem;
+  font-size: 0.62rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.pin-badge.draft {
+  background: #fff4e0;
+  color: #92620c;
+}
+
+.pin-owner-actions {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pin-owner-actions .pin-edit {
+  position: static;
+}
+
+.pin-edit-write {
+  background: var(--accent);
+  color: #fff;
+}
+
+.pin-edit-write:hover {
+  background: var(--accent-hover);
+}
+
+/* Story metadata badges (rating / warnings / category / complete / language) */
+.story-meta-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.6rem 0;
+}
+
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.14);
+  color: inherit;
+}
+
+.meta-badge.rating-explicit,
+.meta-badge.rating-mature {
+  background: rgba(185, 28, 28, 0.25);
+  border-color: rgba(185, 28, 28, 0.4);
+}
+
+.meta-badge.rating-teen {
+  background: rgba(234, 179, 8, 0.22);
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+.meta-badge.rating-general,
+.meta-badge.rating-not-rated {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.meta-badge.warning {
+  background: rgba(185, 28, 28, 0.18);
+}
+
+.meta-badge.status.complete {
+  background: rgba(34, 197, 94, 0.22);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+/* On light, non-hero surfaces (cards, forms) badges need dark text */
+.profile-card .meta-badge,
+.chapter-preview .meta-badge {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+
+.manage-work-btn {
+  margin-top: 1rem;
+}
+
+.chapter-count-hint {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Tag input (fandom / relationship / character / freeform) */
+.tag-input-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.tag-input-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-bottom: 0.35rem;
+}
+
+.tag-input-shell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.tag-input-shell:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-ring);
+}
+
+.tag-input-shell input {
+  flex: 1;
+  min-width: 120px;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0.2rem;
+  font: inherit;
+  color: var(--text);
+}
+
+.tag-input-shell .tag-chip.removable button {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0;
+  margin-left: 0.15rem;
+}
+
+.tag-input-suggestions {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  padding: 0.3rem;
+  list-style: none;
+  margin: 0;
+}
+
+.tag-input-suggestions button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tag-input-suggestions button:hover,
+.tag-input-suggestions button.active {
+  background: var(--accent-subtle-strong);
+}
+
+.tag-input-count {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+/* Rich text editor */
+.rte-wrap {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.rte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.rte-toolbar-group {
+  display: flex;
+  gap: 0.2rem;
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--border);
+}
+
+.rte-toolbar-group:last-child,
+.rte-toolbar-group.rte-toolbar-mode {
+  border-right: none;
+}
+
+.rte-toolbar-mode {
+  margin-left: auto;
+  padding-right: 0;
+}
+
+.rte-btn {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.rte-btn:hover:not(:disabled) {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.rte-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-hover);
+}
+
+.rte-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rte-mode-btn {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rte-mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.rte-content,
+.rte-html-textarea {
+  min-height: 340px;
+  padding: 1.1rem 1.3rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.rte-content {
+  outline: none;
+}
+
+.rte-content p {
+  margin: 0 0 1em;
+}
+
+.rte-content:focus {
+  outline: none;
+}
+
+.rte-html-textarea {
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: vertical;
+  font-family: 'DM Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.9rem;
+  background: var(--surface);
+}
+
+/* My works dashboard */
+.my-works-page {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+}
+
+.my-works-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-works-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.my-works-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.my-works-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.my-works-cover {
+  flex-shrink: 0;
+  width: 80px;
+  height: 110px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+}
+
+.my-works-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-works-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.my-works-title-row h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.my-works-meta {
+  margin: 0.3rem 0 0.7rem;
+  font-size: 0.88rem;
+}
+
+.my-works-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.btn.ghost.danger {
+  color: var(--danger);
+}
+
+.btn.ghost.danger:hover {
+  background: #fef2f2;
+}
+
+/* Story edit page */
+.story-edit-page,
+.chapter-edit-page {
+  max-width: 980px;
+  margin: 0 auto 3rem;
+}
+
+.story-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.story-edit-header h1 {
+  margin: 0.3rem 0 0.4rem;
+  font-size: 1.6rem;
+}
+
+.story-edit-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.story-edit-grid,
+.chapter-edit-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field-hint-inline {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.story-cover-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.story-cover-preview {
+  width: 96px;
+  height: 130px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.story-edit-chapters .profile-card-head {
+  align-items: center;
+}
+
+.chapter-manager-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chapter-manager-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.chapter-manager-order {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.chapter-manager-order button {
+  width: 1.6rem;
+  height: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--text);
+  line-height: 1;
+}
+
+.chapter-manager-order button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.chapter-manager-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.chapter-manager-title {
+  margin: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chapter-manager-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Chapter editor */
+.chapter-edit-body .profile-card-head {
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.chapter-preview {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 0;
+}
+
+.chapter-note-block {
+  padding: 0.85rem 1.1rem;
+  margin: 0 0 1.25rem;
+  border-radius: 10px;
+  background: var(--accent-subtle);
+  border-left: 3px solid var(--accent);
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.chapter-note-block p {
+  margin: 0 0 0.4rem;
+}
+
+.chapter-note-block p:last-child {
+  margin-bottom: 0;
+}
+
+.chapter-end-notes {
+  margin-top: 1.5rem;
+}
+
+/* Reader blocks (rich HTML paragraphs) reset inner tag margins so the
+   outer .reader-para-text spacing stays the single source of truth. */
+.reader-block > p,
+.reader-block > h2,
+.reader-block > h3,
+.reader-block > h4,
+.reader-block > blockquote,
+.reader-block > ul,
+.reader-block > ol {
+  margin: 0;
+}
+
+.reader-block blockquote {
+  padding-left: 1rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+
+.reader-block ul,
+.reader-block ol {
+  padding-left: 1.4rem;
+}
+
+@media (max-width: 720px) {
+  .my-works-row {
+    flex-direction: column;
+  }
+
+  .my-works-cover {
+    width: 100%;
+    height: 140px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .story-edit-header {
+    flex-direction: column;
+  }
+
+  .rte-toolbar-group {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .rte-toolbar-mode {
+    margin-left: 0;
+  }
+}

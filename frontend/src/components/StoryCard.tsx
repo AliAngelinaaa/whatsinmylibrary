@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { StorySummary } from '../api'
 import { MONETIZATION_ENABLED } from '../features'
+import { coverStyle } from '../utils/cover'
 import { userProfilePath } from './Avatar'
 
 export default function StoryCard({ story }: { story: StorySummary }) {
@@ -9,7 +10,7 @@ export default function StoryCard({ story }: { story: StorySummary }) {
   return (
     <article className="story-card">
       <Link to={`/story/${story.id}`} className="story-cover-link">
-        <div className="story-cover" style={{ background: story.coverColor }}>
+        <div className="story-cover" style={coverStyle(story)}>
           <span className="genre-tag">{story.genre}</span>
         </div>
       </Link>

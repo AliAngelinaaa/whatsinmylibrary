@@ -16,6 +16,7 @@ const BROWSE_PATHS = ['/browse', '/originals', '/fanfics', ...(MONETIZATION_ENAB
 
 const USER_MENU_ITEMS = [
   { to: 'public', label: 'View public profile' },
+  { to: '/write', label: 'My works' },
   { to: '/profile', label: 'Settings' },
   { to: '/profile?tab=notifications', label: 'Notification preferences' },
   { to: '/profile?tab=reading', label: 'Display & reading' },
@@ -39,6 +40,7 @@ export default function Layout() {
   }
 
   const menuItemActive = (to: string) => {
+    if (!to.startsWith('/profile')) return isActive(to)
     if (location.pathname !== '/profile') return false
     const tab = new URL(to, 'http://local').searchParams.get('tab')
     const currentTab = new URLSearchParams(location.search).get('tab')

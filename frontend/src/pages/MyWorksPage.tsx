@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api, apiErrorMessage, type MyStorySummary } from '../api'
+import { coverStyle } from '../utils/cover'
 
 export default function MyWorksPage() {
   const navigate = useNavigate()
@@ -71,15 +72,7 @@ export default function MyWorksPage() {
         <div className="my-works-list">
           {works.map((work) => (
             <article key={work.id} className="my-works-row">
-              <div
-                className="my-works-cover"
-                style={
-                  work.coverImageUrl
-                    ? { backgroundImage: `url(${work.coverImageUrl})` }
-                    : { background: work.coverColor }
-                }
-                aria-hidden
-              />
+              <div className="my-works-cover" style={coverStyle(work)} aria-hidden />
               <div className="my-works-body">
                 <div className="my-works-title-row">
                   <h2>

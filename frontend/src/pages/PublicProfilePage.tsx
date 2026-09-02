@@ -83,9 +83,14 @@ export default function PublicProfilePage() {
       <header className="pin-identity">
         <div className="pin-identity-banner" style={bannerStyle} />
         {isOwnProfile && (
-          <Link to="/profile" className="pin-edit">
-            Customize
-          </Link>
+          <div className="pin-owner-actions">
+            <Link to="/write" className="pin-edit pin-edit-write">
+              Post a new work
+            </Link>
+            <Link to="/profile" className="pin-edit">
+              Customize
+            </Link>
+          </div>
         )}
         <div className="pin-identity-row">
           <Avatar user={user} size="xl" className="pin-avatar" />

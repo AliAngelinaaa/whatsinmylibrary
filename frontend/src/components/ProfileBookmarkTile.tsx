@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { ProfileBookmark } from '../api'
+import { coverStyle } from '../utils/cover'
 import { userProfilePath } from './Avatar'
 
 export default function ProfileBookmarkTile({
@@ -15,7 +16,7 @@ export default function ProfileBookmarkTile({
   return (
     <article className="pin-card pin-read">
       <Link to={`/story/${story.id}`} className="pin-card-link">
-        <div className="pin-cover pin-cover-short" style={{ background: story.coverColor }}>
+        <div className="pin-cover pin-cover-short" style={coverStyle(story)}>
           <span className="pin-kicker">Reading</span>
           {showPrivateBadge && !bookmark.isPublic && (
             <span className="pin-badge private">Private</span>

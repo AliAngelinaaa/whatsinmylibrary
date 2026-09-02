@@ -6,6 +6,7 @@ import { userProfilePath } from '../components/Avatar'
 import TipAuthor from '../components/TipAuthor'
 import StoryBookmark from '../components/StoryBookmark'
 import StoryComments from '../components/StoryComments'
+import StoryMetaBadges from '../components/StoryMetaBadges'
 import { MONETIZATION_ENABLED } from '../features'
 import { useCopyProtection } from '../hooks/useCopyProtection'
 
@@ -68,9 +69,18 @@ export default function StoryPage() {
   if (loading) return <div className="page-state">Loading…</div>
   if (!story) return <div className="page-state error">{error || 'Story not found'}</div>
 
+  const heroBackground = story.coverImageUrl
+    ? `linear-gradient(180deg, rgba(26,21,16,0.15), rgba(26,21,16,0.55)), url(${story.coverImageUrl})`
+    : `linear-gradient(160deg, ${story.coverColor}, color-mix(in srgb, ${story.coverColor} 70%, #1a1510))`
+
+  const publishedChapterCount = story.chapters.filter((c) => c.published !== false).length
+
   return (
     <div className="story-page">
-      <div className="story-hero" style={{ background: `linear-gradient(160deg, ${story.coverColor}, color-mix(in srgb, ${story.coverColor} 70%, #1a1510))` }}>
+      <div
+        className={`story-hero ${story.coverImageUrl ? 'has-cover-image' : ''}`}
+        style={{ background: heroBackground, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
         <div className="story-hero-inner protected-content" ref={storyHeroRef}>
           <Link to={`/browse?genre=${encodeURIComponent(story.genre)}`} className="genre-tag linkish">
             {story.genre}
@@ -85,7 +95,25 @@ export default function StoryPage() {
             ) : (
               story.author.fullName
             )}
+            {story.coAuthors && story.coAuthors.length > 0 && (
+              <>
+                {' & '}
+                {story.coAuthors.map((co, i) => (
+                  <span key={co.id}>
+                    {i > 0 && ', '}
+                    {userProfilePath(co) ? <Link to={userProfilePath(co)!} className="author-link">{co.fullName}</Link> : co.fullName}
+                  </span>
+                ))}
+              </>
+            )}
           </p>
+          <StoryMetaBadges
+            rating={story.rating}
+            warnings={story.warnings}
+            categories={story.categories}
+            complete={story.complete}
+            language={story.language}
+          />
           <p className="story-desc">{story.description}</p>
           {story.tags?.length > 0 && (
             <div className="tag-row hero-tags">
@@ -100,6 +128,11 @@ export default function StoryPage() {
               ))}
             </div>
           )}
+          {story.isOwner && (
+            <Link to={`/write/${story.id}`} className="btn secondary manage-work-btn">
+              Manage this work
+            </Link>
+          )}
         </div>
       </div>
 
@@ -107,12 +140,20 @@ export default function StoryPage() {
 
       <div className="story-page-grid">
         <section className="chapter-list">
-          <h2>Chapters</h2>
+          <h2>
+            Chapters{' '}
+            <span className="chapter-count-hint">
+              {publishedChapterCount}/{story.complete ? publishedChapterCount : '?'}
+            </span>
+          </h2>
           {story.chapters.map((ch) => (
             <div key={ch.id} className={`chapter-row ${ch.locked ? 'locked' : ''}`}>
               <div>
                 <p className="chapter-num">Chapter {ch.number}</p>
-                <p className="chapter-title">{ch.title}</p>
+                <p className="chapter-title">
+                  {ch.title}
+                  {ch.published === false && <span className="status-pill small draft">Draft</span>}
+                </p>
               </div>
               <div className="chapter-actions">
                 {ch.locked ? (
