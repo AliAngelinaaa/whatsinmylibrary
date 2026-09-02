@@ -1,8 +1,9 @@
 package main
 
 import (
-	"booksite/config"
-	"booksite/routes"
+	"backend/config"
+	"backend/routes"
+	"backend/seed"
 	"log"
 	"net/http"
 )
@@ -10,7 +11,9 @@ import (
 func main() {
 	config.InitEnv()
 	config.ConnectDatabase()
+	seed.Run()
+
 	router := routes.SetupRouter()
 	log.Println("Server running at http://localhost:8080")
-	http.ListenAndServe(":8080", router)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

@@ -1,0 +1,16 @@
+{
+  "name": "whatsinmylibrary",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev:all",
+    "dev:all": "concurrently -k -n api,web -c green,magenta \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:db": "docker compose up db -d",
+    "dev:backend": "cd backend && go run .",
+    "dev:frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && SEED_FORCE=true go run .",
+    "install:all": "npm install && cd frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
