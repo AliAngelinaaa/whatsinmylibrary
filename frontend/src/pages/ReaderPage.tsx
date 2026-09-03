@@ -86,6 +86,7 @@ export default function ReaderPage() {
   const [activePara, setActivePara] = useState<number | null>(null)
   const [hoveredPara, setHoveredPara] = useState<number | null>(null)
   const [activeCommentId, setActiveCommentId] = useState<number | null>(null)
+  const [tocOpen, setTocOpen] = useState(false)
 
   const storyId = Number(id)
   const chapterNum = Number(num)
@@ -124,10 +125,17 @@ export default function ReaderPage() {
         setSelection(null)
         setActiveCommentId(null)
       }
+      if (!target.closest('.toc-menu')) {
+        setTocOpen(false)
+      }
     }
     document.addEventListener('mousedown', closeOnClickOutside)
     return () => document.removeEventListener('mousedown', closeOnClickOutside)
   }, [])
+
+  useEffect(() => {
+    setTocOpen(false)
+  }, [chapterNum])
 
   const unlock = async () => {
     if (!chapter || !user) {
@@ -238,9 +246,44 @@ export default function ReaderPage() {
         <Link to={`/story/${storyId}`} className="btn ghost">
           ← Back to story
         </Link>
-        <span className="reader-meta">
-          {story.title} · Ch. {chapter.number}
-        </span>
+
+        <div className={`toc-menu ${tocOpen ? 'open' : ''}`}>
+          <button
+            type="button"
+            className="reader-meta toc-trigger"
+            onClick={() => setTocOpen((v) => !v)}
+            aria-expanded={tocOpen}
+            aria-haspopup="listbox"
+          >
+            <span className="toc-icon" aria-hidden>☰</span>
+            {story.title} · Ch. {chapter.number}
+            <span className="toc-chevron" aria-hidden>▾</span>
+          </button>
+          <div className="toc-dropdown" role="listbox" aria-label="Table of contents">
+            <p className="toc-dropdown-title">{story.title}</p>
+            <ul className="toc-list">
+              {story.chapters.map((c) => {
+                const isCurrent = c.number === chapterNum
+                const isLocked = MONETIZATION_ENABLED && c.locked && !c.unlocked
+                return (
+                  <li key={c.id}>
+                    <Link
+                      to={`/story/${storyId}/read/${c.number}`}
+                      className={`toc-item ${isCurrent ? 'active' : ''}`}
+                      aria-current={isCurrent ? 'true' : undefined}
+                      onClick={() => setTocOpen(false)}
+                    >
+                      <span className="toc-item-num">{c.number}.</span>
+                      <span className="toc-item-title">{c.title || `Chapter ${c.number}`}</span>
+                      {isLocked && <span className="toc-item-lock" aria-hidden>◎</span>}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        </div>
+
         {user && (
           <Link to="/profile" className="btn ghost">
             Reader settings

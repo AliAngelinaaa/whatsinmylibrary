@@ -121,8 +121,10 @@ export default function StoryEditPage() {
     setCoAuthors(coAuthors.filter((c) => c !== name))
   }
 
+  const isFanfiction = genre.trim().toLowerCase() === 'fanfiction'
+
   const buildTagPayload = () => [
-    ...fandomTags.map((name) => ({ name, category: 'fandom' as const })),
+    ...(isFanfiction ? fandomTags.map((name) => ({ name, category: 'fandom' as const })) : []),
     ...relationshipTags.map((name) => ({ name, category: 'relationship' as const })),
     ...characterTags.map((name) => ({ name, category: 'character' as const })),
     ...freeformTags.map((name) => ({ name, category: 'freeform' as const })),
@@ -256,6 +258,9 @@ export default function StoryEditPage() {
           <button type="button" className="btn ghost danger" onClick={handleDelete} disabled={saving}>
             Delete work
           </button>
+          <Link to={`/story/${story.id}`} target="_blank" rel="noreferrer" className="btn ghost">
+            Preview
+          </Link>
           <button
             type="button"
             className="btn secondary"
@@ -394,10 +399,16 @@ export default function StoryEditPage() {
         <section className="profile-card">
           <div className="profile-card-head">
             <h2>Tags</h2>
-            <p className="field-hint">Fandoms, pairings, characters, and freeform tags help readers find your work.</p>
+            <p className="field-hint">
+              {isFanfiction
+                ? 'Fandoms, pairings, characters, and freeform tags help readers find your work.'
+                : 'Pairings, characters, and freeform tags help readers find your work. Set the shelf/genre to "Fanfiction" to add fandom tags.'}
+            </p>
           </div>
 
-          <TagInput category="fandom" label="Fandom" value={fandomTags} onChange={setFandomTags} placeholder="Add a fandom…" />
+          {isFanfiction && (
+            <TagInput category="fandom" label="Fandom" value={fandomTags} onChange={setFandomTags} placeholder="Add a fandom…" />
+          )}
           <TagInput
             category="relationship"
             label="Relationships"
