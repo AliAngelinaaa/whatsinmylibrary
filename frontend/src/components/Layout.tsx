@@ -34,6 +34,8 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  const isReading = /\/story\/\d+\/read\//.test(location.pathname)
+
   const isActive = (to: string, end?: boolean) => {
     if (end) return location.pathname === to
     return location.pathname === to || location.pathname.startsWith(`${to}/`)
@@ -73,7 +75,7 @@ export default function Layout() {
   }, [])
 
   return (
-    <div className={`app-shell${user ? '' : ' guest'}`}>
+    <div className={`app-shell${user ? '' : ' guest'}${isReading ? ' reading' : ''}`}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

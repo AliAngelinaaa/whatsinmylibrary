@@ -141,7 +141,7 @@ func ListLineCommentsHandler(w http.ResponseWriter, r *http.Request) {
 
 	var comments []models.LineComment
 	config.DB.Preload("User").Where("chapter_id = ?", chapterID).
-		Order("paragraph_idx asc, start_offset asc").Find(&comments)
+		Order("paragraph_idx asc, start_offset asc, created_at asc").Find(&comments)
 
 	out := make([]map[string]interface{}, 0, len(comments))
 	for _, c := range comments {
@@ -165,6 +165,7 @@ func CreateLineCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	var body struct {
 		contentPayload
+		ParentID     *uint  `json:"parentId"`
 		ParagraphIdx int    `json:"paragraphIdx"`
 		StartOffset  int    `json:"startOffset"`
 		EndOffset    int    `json:"endOffset"`
@@ -180,11 +181,6 @@ func CreateLineCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if body.ParagraphIdx < 0 || body.StartOffset < 0 || body.EndOffset <= body.StartOffset {
-		http.Error(w, `{"error":"invalid selection"}`, http.StatusBadRequest)
-		return
-	}
-
 	var chapter models.Chapter
 	if err := config.DB.First(&chapter, chapterID).Error; err != nil {
 		http.Error(w, `{"error":"chapter not found"}`, http.StatusNotFound)
@@ -196,9 +192,27 @@ func CreateLineCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if body.ParentID != nil {
+		var parent models.LineComment
+		if err := config.DB.First(&parent, *body.ParentID).Error; err != nil || parent.ChapterID != uint(chapterID) {
+			http.Error(w, `{"error":"invalid parent comment"}`, http.StatusBadRequest)
+			return
+		}
+		body.ParagraphIdx = parent.ParagraphIdx
+		body.StartOffset = parent.StartOffset
+		body.EndOffset = parent.EndOffset
+		if strings.TrimSpace(body.SelectedText) == "" {
+			body.SelectedText = parent.SelectedText
+		}
+	} else if body.ParagraphIdx < 0 || body.StartOffset < 0 || body.EndOffset < body.StartOffset {
+		http.Error(w, `{"error":"invalid selection"}`, http.StatusBadRequest)
+		return
+	}
+
 	comment := models.LineComment{
 		ChapterID:    uint(chapterID),
 		UserID:       user.ID,
+		ParentID:     body.ParentID,
 		ParagraphIdx: body.ParagraphIdx,
 		StartOffset:  body.StartOffset,
 		EndOffset:    body.EndOffset,
@@ -215,7 +229,7 @@ func CreateLineCommentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func lineCommentResponse(c models.LineComment) map[string]interface{} {
-	return map[string]interface{}{
+	resp := map[string]interface{}{
 		"id":           c.ID,
 		"chapterId":    c.ChapterID,
 		"paragraphIdx": c.ParagraphIdx,
@@ -226,6 +240,10 @@ func lineCommentResponse(c models.LineComment) map[string]interface{} {
 		"createdAt":    c.CreatedAt,
 		"user":         commentUserFrom(c.User),
 	}
+	if c.ParentID != nil {
+		resp["parentId"] = *c.ParentID
+	}
+	return resp
 }
 
 func chapterAccessible(r *http.Request, chapter models.Chapter) bool {

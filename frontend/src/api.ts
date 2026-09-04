@@ -304,6 +304,7 @@ export interface LineComment {
   selectedText: string
   body: string
   createdAt: string
+  parentId?: number
   user: CommentUser
 }
 
@@ -501,6 +502,7 @@ export const api = {
       startOffset: number
       endOffset: number
       selectedText: string
+      parentId?: number
     },
   ) =>
     request<LineComment>(`/api/chapters/${chapterId}/line-comments`, {

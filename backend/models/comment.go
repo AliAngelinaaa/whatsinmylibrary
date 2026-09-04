@@ -16,6 +16,7 @@ type LineComment struct {
 	ID           uint      `json:"id" gorm:"primaryKey"`
 	ChapterID    uint      `json:"chapterId" gorm:"index"`
 	UserID       uint      `json:"userId"`
+	ParentID     *uint     `json:"parentId" gorm:"index"`
 	User         User      `json:"user" gorm:"foreignKey:UserID"`
 	ParagraphIdx int       `json:"paragraphIdx"`
 	StartOffset  int       `json:"startOffset"`

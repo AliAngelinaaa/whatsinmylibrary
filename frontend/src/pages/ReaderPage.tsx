@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, type ChapterDetail, type LineComment, type StoryDetail } from '../api'
 import { useAuth } from '../AuthContext'
@@ -38,7 +39,7 @@ function ReaderParagraph({
     el.innerHTML = html
 
     const ranges = comments
-      .filter((c) => c.startOffset >= 0 && c.endOffset > c.startOffset)
+      .filter((c) => !c.parentId && c.startOffset >= 0 && c.endOffset > c.startOffset)
       .sort((a, b) => a.startOffset - b.startOffset)
 
     for (const c of ranges) {
@@ -118,6 +119,7 @@ export default function ReaderPage() {
       const target = e.target as HTMLElement
       if (
         !target.closest('.inline-comment-panel') &&
+        !target.closest('.inline-comment-sidebar') &&
         !target.closest('.inline-comment-bubble') &&
         !target.closest('.inline-selection-toolbar')
       ) {
@@ -192,34 +194,44 @@ export default function ReaderPage() {
     setActivePara(paraIdx)
   }
 
-  const postLineComment = async (body: string) => {
+  const postLineComment = async (body: string, parentId?: number) => {
     if (!user) {
       navigate('/login')
       throw new Error('Unauthorized')
     }
     if (!chapter) throw new Error('Chapter not loaded')
 
-    const paraIdx = selection?.paragraphIdx ?? activePara
+    const parent = parentId ? lineComments.find((c) => c.id === parentId) : undefined
+    const paraIdx = parent?.paragraphIdx ?? selection?.paragraphIdx ?? activePara
     if (paraIdx == null) throw new Error('No active paragraph selected')
 
     const paraText = htmlToText(contentBlocks[paraIdx] ?? '')
-    const hasSelection = selection && selection.paragraphIdx === paraIdx
+    const hasSelection = !parent && selection && selection.paragraphIdx === paraIdx
 
-    const payload = hasSelection
+    const payload = parent
       ? {
           body,
-          paragraphIdx: selection.paragraphIdx,
-          startOffset: selection.startOffset,
-          endOffset: selection.endOffset,
-          selectedText: selection.selectedText,
+          parentId: parent.id,
+          paragraphIdx: parent.paragraphIdx,
+          startOffset: parent.startOffset,
+          endOffset: parent.endOffset,
+          selectedText: parent.selectedText,
         }
-      : {
-          body,
-          paragraphIdx: paraIdx,
-          startOffset: 0,
-          endOffset: paraText.length > 0 ? paraText.length : 0, // Ensure endOffset is valid for empty/short paras
-          selectedText: paraText.slice(0, 120),
-        }
+      : hasSelection
+        ? {
+            body,
+            paragraphIdx: selection.paragraphIdx,
+            startOffset: selection.startOffset,
+            endOffset: selection.endOffset,
+            selectedText: selection.selectedText,
+          }
+        : {
+            body,
+            paragraphIdx: paraIdx,
+            startOffset: 0,
+            endOffset: Math.max(paraText.length, 1),
+            selectedText: paraText.slice(0, 120),
+          }
 
     const comment = await api.postLineComment(chapter.id, payload)
     setLineComments((prev) => [...prev, comment])
@@ -243,8 +255,9 @@ export default function ReaderPage() {
   return (
     <div className={`reader-page wattpad-inline theme-${theme} size-${fontSize} font-${font}`}>
       <div className="reader-toolbar">
-        <Link to={`/story/${storyId}`} className="btn ghost">
-          ← Back to story
+        <Link to={`/story/${storyId}`} className="btn ghost reader-back">
+          <span className="reader-back-full">← Back to story</span>
+          <span className="reader-back-short" aria-hidden>← Story</span>
         </Link>
 
         <div className={`toc-menu ${tocOpen ? 'open' : ''}`}>
@@ -256,7 +269,8 @@ export default function ReaderPage() {
             aria-haspopup="listbox"
           >
             <span className="toc-icon" aria-hidden>☰</span>
-            {story.title} · Ch. {chapter.number}
+            <span className="toc-label-full">{story.title} · Ch. {chapter.number}</span>
+            <span className="toc-label-short">{chapter.title || `Chapter ${chapter.number}`}</span>
             <span className="toc-chevron" aria-hidden>▾</span>
           </button>
           <div className="toc-dropdown" role="listbox" aria-label="Table of contents">
@@ -285,8 +299,9 @@ export default function ReaderPage() {
         </div>
 
         {user && (
-          <Link to="/profile" className="btn ghost">
-            Reader settings
+          <Link to="/profile?tab=reading" className="btn ghost reader-settings-link" title="Reading settings" aria-label="Reading settings">
+            <span className="reader-settings-full">Reader settings</span>
+            <span className="reader-settings-short" aria-hidden>Aa</span>
           </Link>
         )}
       </div>
@@ -417,7 +432,7 @@ export default function ReaderPage() {
           )}
         </article>
 
-        {activePara !== null && canReadFull && (
+        {activePara !== null && canReadFull && createPortal(
           <>
             <div
               className="inline-comment-backdrop"
@@ -427,7 +442,11 @@ export default function ReaderPage() {
                 setActiveCommentId(null)
               }}
             />
-            <aside className="inline-comment-sidebar">
+            <aside
+              className="inline-comment-sidebar"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
               <InlineCommentPanel
                 comments={commentsForPara(activePara)}
                 selectionQuote={selection?.paragraphIdx === activePara ? selection.selectedText : undefined}
@@ -440,7 +459,8 @@ export default function ReaderPage() {
                 onPost={postLineComment}
               />
             </aside>
-          </>
+          </>,
+          document.body,
         )}
       </div>
 
