@@ -361,7 +361,8 @@ export default function ReaderPage() {
                 </div>
               )}
               <p className="inline-reading-hint muted">
-                Hover a paragraph and tap the bubble to comment · highlight text to comment on a specific phrase
+                <span className="hint-desktop">Hover a paragraph and tap the bubble to comment · highlight text to comment on a specific phrase</span>
+                <span className="hint-touch">Tap a paragraph to comment · highlight text to comment on a phrase</span>
               </p>
               {contentBlocks.map((block, i) => {
                 const paraComments = commentsForPara(i)
@@ -374,6 +375,14 @@ export default function ReaderPage() {
                     className={`reader-para-row ${activePara === i ? 'panel-open' : ''}`}
                     onMouseEnter={() => setHoveredPara(i)}
                     onMouseLeave={() => setHoveredPara(null)}
+                    onClick={(e) => {
+                      const target = e.target as HTMLElement
+                      if (target.closest('button, a, mark, textarea, input')) return
+                      if (!window.matchMedia('(hover: none)').matches) return
+                      const sel = window.getSelection()
+                      if (sel && !sel.isCollapsed && sel.toString().trim()) return
+                      openParaComments(i)
+                    }}
                   >
                     <ReaderParagraph
                       index={i}

@@ -89,9 +89,10 @@ export default function Layout() {
           className={`nav-toggle ${navOpen ? 'open' : ''}`}
           aria-expanded={navOpen}
           aria-controls="main-nav"
+          aria-label={navOpen ? 'Close menu' : 'Open menu'}
           onClick={() => setNavOpen((open) => !open)}
         >
-          {navOpen ? 'Close' : 'Menu'}
+          <span className="nav-toggle-icon" aria-hidden>{navOpen ? '✕' : '☰'}</span>
         </button>
 
         <nav id="main-nav" className={`topnav ${navOpen ? 'open' : ''}`} aria-label="Main">
