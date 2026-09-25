@@ -19,10 +19,18 @@ function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime()
   const mins = Math.floor(diff / 60000)
   if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins}m ago`
+  if (mins < 60) return `${mins}m`
   const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  return `${Math.floor(hrs / 24)}d ago`
+  if (hrs < 24) return `${hrs}h`
+  return `${Math.floor(hrs / 24)}d`
+}
+
+function authorName(user: LineComment['user']) {
+  return user.username || user.fullName
+}
+
+function flattenReplies(node: LineThread): LineThread[] {
+  return node.replies.flatMap((child) => [child, ...flattenReplies(child)])
 }
 
 function InlineReplyForm({
@@ -77,50 +85,45 @@ function InlineReplyForm({
   )
 }
 
-function InlineThreadNode({
+function InstagramComment({
   item,
-  depth,
+  isReply,
   canReply,
   onReply,
 }: {
   item: LineThread
-  depth: number
+  isReply?: boolean
   canReply: boolean
   onReply: (parentId: number, body: string) => Promise<void>
 }) {
   const [replying, setReplying] = useState(false)
-  const maxDepth = 4
+  const name = authorName(item.user)
 
   return (
-    <li className={`inline-thread-node depth-${Math.min(depth, maxDepth)}`}>
-      <div className="inline-comment-panel-item">
-        <div className="inline-comment-panel-user">
-          <Avatar user={item.user} size="xs" link className="comment-avatar" />
+    <div className={`ig-comment${isReply ? ' is-reply' : ''}`}>
+      <Avatar user={item.user} size={isReply ? 'xs' : 'sm'} link />
+      <div className="ig-comment-main">
+        <p className="ig-comment-text">
           {userProfilePath(item.user) ? (
-            <Link to={userProfilePath(item.user)!} className="author-link">
-              <strong>{item.user.username || item.user.fullName}</strong>
+            <Link to={userProfilePath(item.user)!} className="ig-comment-user">
+              {name}
             </Link>
           ) : (
-            <strong>{item.user.username || item.user.fullName}</strong>
+            <strong className="ig-comment-user">{name}</strong>
+          )}{' '}
+          {item.body}
+        </p>
+        <div className="ig-comment-actions">
+          <span>{timeAgo(item.createdAt)}</span>
+          {canReply && (
+            <button type="button" onClick={() => setReplying((open) => !open)}>
+              {replying ? 'Cancel' : 'Reply'}
+            </button>
           )}
-          <span className="muted inline-comment-time">{timeAgo(item.createdAt)}</span>
         </div>
-        {item.selectedText && depth === 0 && (
-          <p className="inline-comment-panel-quote">"{item.selectedText}"</p>
-        )}
-        <p className="inline-comment-panel-body">{item.body}</p>
-        {canReply && depth < maxDepth && (
-          <button
-            type="button"
-            className="thread-reply-btn"
-            onClick={() => setReplying((open) => !open)}
-          >
-            {replying ? 'Cancel' : 'Reply'}
-          </button>
-        )}
         {replying && (
           <InlineReplyForm
-            placeholder="Write a reply…"
+            placeholder={`Reply to ${name}…`}
             onCancel={() => setReplying(false)}
             onSubmit={async (body) => {
               await onReply(item.id, body)
@@ -129,18 +132,50 @@ function InlineThreadNode({
           />
         )}
       </div>
-      {item.replies.length > 0 && (
-        <ul className="inline-thread-children">
-          {item.replies.map((child) => (
-            <InlineThreadNode
-              key={child.id}
-              item={child}
-              depth={depth + 1}
-              canReply={canReply}
-              onReply={onReply}
-            />
-          ))}
-        </ul>
+    </div>
+  )
+}
+
+function InstagramThread({
+  item,
+  canReply,
+  onReply,
+}: {
+  item: LineThread
+  canReply: boolean
+  onReply: (parentId: number, body: string) => Promise<void>
+}) {
+  const [showReplies, setShowReplies] = useState(true)
+  const replies = flattenReplies(item)
+  const count = replies.length
+
+  return (
+    <li className="ig-thread">
+      <InstagramComment item={item} canReply={canReply} onReply={onReply} />
+      {count > 0 && (
+        <>
+          <button
+            type="button"
+            className="ig-view-replies"
+            onClick={() => setShowReplies((open) => !open)}
+            aria-expanded={showReplies}
+          >
+            <span className="ig-view-replies-line" aria-hidden />
+            {showReplies
+              ? 'Hide replies'
+              : `View ${count} ${count === 1 ? 'reply' : 'replies'}`}
+          </button>
+          {showReplies &&
+            replies.map((reply) => (
+              <InstagramComment
+                key={reply.id}
+                item={reply}
+                isReply
+                canReply={canReply}
+                onReply={onReply}
+              />
+            ))}
+        </>
       )}
     </li>
   )
@@ -190,10 +225,9 @@ export default function InlineCommentPanel({
           <li className="muted inline-comment-empty">No comments on this paragraph yet.</li>
         )}
         {tree.map((item) => (
-          <InlineThreadNode
+          <InstagramThread
             key={item.id}
             item={item}
-            depth={0}
             canReply={canPost}
             onReply={(parentId, replyBody) => onPost(replyBody, parentId)}
           />
