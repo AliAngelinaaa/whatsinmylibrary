@@ -19,6 +19,27 @@
             }
         },
         {
+            "source": "/auth/google(/.*)?",
+            "destination": {
+                "type": "service",
+                "service": "backend"
+            }
+        },
+        {
+            "source": "/auth/dev",
+            "destination": {
+                "type": "service",
+                "service": "backend"
+            }
+        },
+        {
+            "source": "/uploads(/.*)?",
+            "destination": {
+                "type": "service",
+                "service": "backend"
+            }
+        },
+        {
             "source": "/(.*)",
             "destination": {
                 "type": "service",
